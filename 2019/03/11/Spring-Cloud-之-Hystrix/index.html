@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.1">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.0.1">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.0.1">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.0.1">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.0.1" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.0.1',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="说到Spring Cloud就不得不想到 Netflix 公司, 因为该公司贡献出了微服务相关的很多开源项目。在这里我们今天来说说 Netflix 家族里的 Netflix ，相关官方文档. 我是一个使用任何一个中间件，都比较喜欢看官方文档的人, 因为官方的文档最权威 一、为什么用Hystrix？先看看Hystrix有些什么功能1. 隔离 : 隔离微服务调用下级服务过程中，下级服务故障或者响应能力">
+<meta name="keywords" content="JAVA,JavaScript,C#,Spring,Spring Cloud,领域驱动开发">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring Cloud 之 Hystrix">
+<meta property="og:url" content="https://labidc.github.io/2019/03/11/Spring-Cloud-之-Hystrix/index.html">
+<meta property="og:site_name" content="老码的技术仓库">
+<meta property="og:description" content="说到Spring Cloud就不得不想到 Netflix 公司, 因为该公司贡献出了微服务相关的很多开源项目。在这里我们今天来说说 Netflix 家族里的 Netflix ，相关官方文档. 我是一个使用任何一个中间件，都比较喜欢看官方文档的人, 因为官方的文档最权威 一、为什么用Hystrix？先看看Hystrix有些什么功能1. 隔离 : 隔离微服务调用下级服务过程中，下级服务故障或者响应能力">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://labidc.github.io/2019/03/11/Spring-Cloud-之-Hystrix/tomcatnoquest.png">
+<meta property="og:image" content="https://labidc.github.io/2019/03/11/Spring-Cloud-之-Hystrix/tomcatrquest20.png">
+<meta property="og:image" content="https://labidc.github.io/2019/03/11/Spring-Cloud-之-Hystrix/THREAD.png">
+<meta property="og:image" content="https://labidc.github.io/2019/03/11/Spring-Cloud-之-Hystrix/SEMAPHORE.png">
+<meta property="og:updated_time" content="2019-03-12T14:47:56.581Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Spring Cloud 之 Hystrix">
+<meta name="twitter:description" content="说到Spring Cloud就不得不想到 Netflix 公司, 因为该公司贡献出了微服务相关的很多开源项目。在这里我们今天来说说 Netflix 家族里的 Netflix ，相关官方文档. 我是一个使用任何一个中间件，都比较喜欢看官方文档的人, 因为官方的文档最权威 一、为什么用Hystrix？先看看Hystrix有些什么功能1. 隔离 : 隔离微服务调用下级服务过程中，下级服务故障或者响应能力">
+<meta name="twitter:image" content="https://labidc.github.io/2019/03/11/Spring-Cloud-之-Hystrix/tomcatnoquest.png">
+
+
+
+
+
+
+  <link rel="canonical" href="https://labidc.github.io/2019/03/11/Spring-Cloud-之-Hystrix/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Spring Cloud 之 Hystrix | 老码的技术仓库</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+    <a href="https://github.com/labidc" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewbox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">老码的技术仓库</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">一些自己的技术学习与理解</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://labidc.github.io/2019/03/11/Spring-Cloud-之-Hystrix/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Labidc">
+      <meta itemprop="description" content="喜欢研究技术的本质">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="老码的技术仓库">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Spring Cloud 之 Hystrix
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-03-11 21:56:38" itemprop="dateCreated datePublished" datetime="2019-03-11T21:56:38+08:00">2019-03-11</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-03-12 22:47:56" itemprop="dateModified" datetime="2019-03-12T22:47:56+08:00">2019-03-12</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Spring-Cloud/" itemprop="url" rel="index"><span itemprop="name">Spring Cloud</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>说到Spring Cloud就不得不想到 Netflix 公司, 因为该公司贡献出了微服务相关的很多开源项目。在这里我们今天来说说 Netflix 家族里的 <a href="https://github.com/Netflix/Hystrix" target="_blank" rel="noopener">Netflix</a> ，<a href="https://github.com/Netflix/Hystrix/wiki/Configuration#fallback.isolation.semaphore.maxConcurrentRequests" target="_blank" rel="noopener">相关官方文档</a>. 我是一个使用任何一个中间件，都比较喜欢看官方文档的人, 因为官方的文档最权威</p>
+<h2 id="一、为什么用Hystrix？"><a href="#一、为什么用Hystrix？" class="headerlink" title="一、为什么用Hystrix？"></a>一、为什么用Hystrix？</h2><h3 id="先看看Hystrix有些什么功能"><a href="#先看看Hystrix有些什么功能" class="headerlink" title="先看看Hystrix有些什么功能"></a>先看看Hystrix有些什么功能</h3><pre><code>1. 隔离 : 隔离微服务调用下级服务过程中，下级服务故障或者响应能力不足造成整个系统崩溃。
+2. 熔断 : 当失败率达到一定阈值时，熔断器触发停止继续调用下级服务，直接返回异常或者降级操作并响应给客户端， 防止请求资源堵塞，起到了限流的作用。
+3. 降级 : 当下级服务出现 网络原因、服务响应太慢、异常、的时候调用的补偿函数，不直接触发异常返回给客户端。
+4. 缓存 : 设置一定的缓存策略，返回缓存数据
+5. 合并请求: 当调用下级服务的时候，下级多次相同调用开销太大，可以合并请求批量调用。
+6. 实时监控、报警: 监控服务调用情况。
+</code></pre><h3 id="Hystrix-提供了哪些方式支持熔断器"><a href="#Hystrix-提供了哪些方式支持熔断器" class="headerlink" title="Hystrix 提供了哪些方式支持熔断器"></a>Hystrix 提供了哪些方式支持熔断器</h3><pre><code>1. 使用注解 @HystrixCommand 
+2. 使用继承 HystrixCommands 和 HystrixObservableCommands 的实现
+3. @FeignClient 用得最多的方式, 记得在配置文件设置 &apos;feign.hystrix.enabled=true&apos; 打开  FeignClient 对熔断器的支持
+</code></pre><h2 id="二、知道了Hystrix的作用，那我们就需要了解如何用好它。"><a href="#二、知道了Hystrix的作用，那我们就需要了解如何用好它。" class="headerlink" title="二、知道了Hystrix的作用，那我们就需要了解如何用好它。"></a>二、知道了Hystrix的作用，那我们就需要了解如何用好它。</h2><h5 id="先描述一下可能出现的应用场景-默认使用Spring-Boot-默认-WebServer-Tomcat"><a href="#先描述一下可能出现的应用场景-默认使用Spring-Boot-默认-WebServer-Tomcat" class="headerlink" title="先描述一下可能出现的应用场景, 默认使用Spring Boot 默认 WebServer (Tomcat)"></a>先描述一下可能出现的应用场景, 默认使用Spring Boot 默认 WebServer (Tomcat)</h5><pre class="mermaid">    graph LR
+        start[用户请求某接口] --> input[微服务A]
+        input -- 调用微服务B -->  B{微服务B}
+        input -- 调用微服务C -->  C{微服务C}
+        input -- 调用微服务D -->  D{微服务D}</pre>
+
+
+
+<h5 id="现在我查看一下，没有任何请求的情况下，-微服务A-Tomcat的线程情况（10个名字-http-nio-“端口号”-exec-“线程流水号”）"><a href="#现在我查看一下，没有任何请求的情况下，-微服务A-Tomcat的线程情况（10个名字-http-nio-“端口号”-exec-“线程流水号”）" class="headerlink" title="现在我查看一下，没有任何请求的情况下， 微服务A Tomcat的线程情况（10个名字 http-nio-“端口号”-exec-“线程流水号”）"></a>现在我查看一下，没有任何请求的情况下， 微服务A Tomcat的线程情况（10个名字 http-nio-“端口号”-exec-“线程流水号”）</h5><p>   <img src="/2019/03/11/Spring-Cloud-之-Hystrix/tomcatnoquest.png" alt="微服务A"></p>
+<h5 id="好了，基本情况描述完了，现在讲讲如何使用，用好任何中间件，一定要搞清楚每个配置的作用，现在我们一个个来"><a href="#好了，基本情况描述完了，现在讲讲如何使用，用好任何中间件，一定要搞清楚每个配置的作用，现在我们一个个来" class="headerlink" title="好了，基本情况描述完了，现在讲讲如何使用，用好任何中间件，一定要搞清楚每个配置的作用，现在我们一个个来"></a>好了，基本情况描述完了，现在讲讲如何使用，用好任何中间件，一定要搞清楚每个配置的作用，现在我们一个个来</h5><blockquote>
+<h2 id="配置文件的设置方式有两种"><a href="#配置文件的设置方式有两种" class="headerlink" title="配置文件的设置方式有两种"></a>配置文件的设置方式有两种</h2><ol>
+<li>第一种：全局默认设置没有设置HystrixCommandKey的Hystrix方法<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">hystrix.command.default.后面的相关配置</span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+</blockquote>
+<blockquote>
+<ol start="2">
+<li>第二种：针对设置了自定义HystrixCommandKey的Hystrix方法，为该Hystrix方法专属使用<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">hystrix.command.HystrixCommandKey.后面的相关配置</span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+</blockquote>
+<blockquote>
+</blockquote>
+<hr>
+<h2 id="正式开始，我们这里以全局默认配置的范例来讲解。"><a href="#正式开始，我们这里以全局默认配置的范例来讲解。" class="headerlink" title="正式开始，我们这里以全局默认配置的范例来讲解。"></a>正式开始，我们这里以全局默认配置的范例来讲解。</h2><figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">hystrix.command.default.execution.isolation.strategy</span></span><br></pre></td></tr></table></figure>
+<p>该设置是熔断器的运行模式，有THREAD, SEMAPHORE两种，默认是THREAD模式，现在用Jmeter模拟每秒并发20个请求,看看在 THREAD, SEMAPHORE和模式下有什么 <strong>微服务A</strong> 里的线程有什么不同</p>
+<h5 id="首先-Tomcat的工作线程数量20"><a href="#首先-Tomcat的工作线程数量20" class="headerlink" title="首先 Tomcat的工作线程数量20"></a>首先 Tomcat的工作线程数量20</h5><p><img src="/2019/03/11/Spring-Cloud-之-Hystrix/tomcatrquest20.png" alt="微服务A"></p>
+<h5 id="THREAD-模式下，为每个下级服务生成了多个线程hystrix-“微服务名称”-线程流水号与Hystrix-Timer-线程流水号"><a href="#THREAD-模式下，为每个下级服务生成了多个线程hystrix-“微服务名称”-线程流水号与Hystrix-Timer-线程流水号" class="headerlink" title="THREAD 模式下，为每个下级服务生成了多个线程hystrix-“微服务名称”-线程流水号与Hystrix-Timer-线程流水号"></a>THREAD 模式下，为每个下级服务生成了多个线程hystrix-“微服务名称”-线程流水号与Hystrix-Timer-线程流水号</h5><p><img src="/2019/03/11/Spring-Cloud-之-Hystrix/THREAD.png" alt="微服务A"></p>
+<h5 id="SEMAPHORE-模式下只生成-Hystrix-Timer-线程流水号-的线程"><a href="#SEMAPHORE-模式下只生成-Hystrix-Timer-线程流水号-的线程" class="headerlink" title="SEMAPHORE 模式下只生成 Hystrix-Timer-线程流水号 的线程"></a>SEMAPHORE 模式下只生成 Hystrix-Timer-线程流水号 的线程</h5><p><img src="/2019/03/11/Spring-Cloud-之-Hystrix/SEMAPHORE.png" alt="微服务A"></p>
+<blockquote>
+<h2 id="以上现象印证了官网配图"><a href="#以上现象印证了官网配图" class="headerlink" title="以上现象印证了官网配图"></a>以上现象印证了官网配图</h2><ol>
+<li>在THREAD模式下，新开了线程调用下级服务，这样可以更加真实的控制下级服务调用的“线程超时时间”。<br>讲道理 必须满足“线程超时时间”&gt;=“网络连接时间”+“请求响应时间”, 才能正常工作。如果你使用的@FeignClient，Feign默认使用的是ribbon, 尝试配置ribbon.ConnectTimeout 连接超时时间和 ribbon.ReadTimeout 响应超时时间 查看效果。ribbon 的超时会直接影响到Hystrix</li>
+<li>在SEMAPHORE（信号量，多线程开发经验丰富的同学都已经很熟悉了）模式下，是使用的Tomcat的工作线程直接同步阻塞调用的下级服务。<br>Hystrix-Timer-线程流水号 是用来管理上面两种模式的计时器。</li>
+<li>总结：官网也是说了在 hystrixcommands 适合 THREAD 模式，当每秒数百个请求的时候，同时方法里调用下级服务又比较多的情况下是成倍数增长，这样是相当占用服务器资源，资源的占用有可能造成频繁的GC回收，以后有机会讲讲JVM相关原理，GC回收是需要重视的，而且线程太多，线程上下文环境的切换也是相当头痛的。SEMAPHORE 模式适合HystrixObservableCommands 调用，这样一个Tomcat工作线程进行批量处理工作。</li>
+</ol>
+</blockquote>
+<hr>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds</span></span><br></pre></td></tr></table></figure>
+<h5 id="注意看下图，现在我改一下上面的图，模拟下层服务的响应延迟-数据库IO并发-小伙伴可以自己做实验"><a href="#注意看下图，现在我改一下上面的图，模拟下层服务的响应延迟-数据库IO并发-小伙伴可以自己做实验" class="headerlink" title="注意看下图，现在我改一下上面的图，模拟下层服务的响应延迟(数据库IO并发) 小伙伴可以自己做实验"></a>注意看下图，现在我改一下上面的图，模拟下层服务的响应延迟(数据库IO并发) 小伙伴可以自己做实验</h5><pre class="mermaid">    graph LR
+        start[用户请求某接口] --> input[微服务A,设置timeoutInMilliseconds=1000]
+        input -- 调用微服务B -->  B{微服务B,线程延迟2秒}
+        input -- 调用微服务C -->  C{微服务C,线程延迟2秒}
+        input -- 调用微服务D -->  D{微服务D,线程延迟2秒}</pre>
+
+
+<blockquote>
+<h2 id="该设置是线程超时时间设置，也就是由-“Hystrix-Timer-线程流水号”-来管理线程超时时间的"><a href="#该设置是线程超时时间设置，也就是由-“Hystrix-Timer-线程流水号”-来管理线程超时时间的" class="headerlink" title="该设置是线程超时时间设置，也就是由 “Hystrix-Timer-线程流水号” 来管理线程超时时间的"></a>该设置是线程超时时间设置，也就是由 “Hystrix-Timer-线程流水号” 来管理线程超时时间的</h2><ol>
+<li>在THREAD模式下，更可控，也就是说当微服务A某方法调用下级的三个服务，如上图。<br>timeoutInMilliseconds 设置1秒超时是小于下级的服务的2秒延迟的，三个下级服务都会超时，3个服务*1秒=3秒，服务A调用下级服务的函数<br>感觉应该是3秒之后超时，但是由于线程模式是独立线程跑下级调用，可以理解可以是一种异步调用。我测试了每秒20个并发，最后平均服务A调用这三个服务的函数执行时间是1-3秒之间完成。</li>
+<li>在SEMAPHORE下，就是另外一种现象，因为信号量的模式是使用Tomcat的工作线程去请求，按道理同步调用应该是 3个服务*2秒=6秒，我同样测试了每秒20个并发，实际效果是接近4-6秒。</li>
+<li>总结：也就是说THREAD模式下线程的中断更可控，所以这就是拿空间换时间。不要小看这几秒的差距，当下级服务处理能力较差的情况下，可以大大提高吞吐量。</li>
+</ol>
+</blockquote>
+<hr>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">hystrix.command.default.execution.timeout.enabled</span></span><br></pre></td></tr></table></figure>
+<p>  该设置是打开或者关闭线程超时的开关，如果这里填写false关闭之后，你就在服务A的Tomcat容器中看不到 Hystrix-Timer-线程流水号 相关线程了，<br>  也就是上面的 timeoutInMilliseconds 设置直接无效了。</p>
+<hr>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">hystrix.command.default.execution.isolation.thread.interruptOnTimeout</span></span><br></pre></td></tr></table></figure>
+<p>  该设置默认值是true, 当timeoutInMilliseconds时间超时之后，直接中断该请求，该设置我尝试设置为false，实际上和true没发现有什么区别，感觉没有生效</p>
+<hr>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">hystrix.command.default.execution.isolation.thread.interruptOnCancel</span></span><br></pre></td></tr></table></figure>
+<p>  该设置从官方文档来讲是当取消请求的时候中断线程，我尝试了各种实验方式都没有效果，于是尝试查询GitHub上的源码，想看看到底有什么操作。结果搜索到另外一个答案<br>  <a href="https://github.com/Netflix/Hystrix/issues/1650" target="_blank" rel="noopener">https://github.com/Netflix/Hystrix/issues/1650</a><br>  官方回答是该设置没有实现功能，只是为了想后兼容做铺垫整的一个配置。</p>
+<hr>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">hystrix.command.default.execution.isolation.semaphore.maxConcurrentRequests</span></span><br></pre></td></tr></table></figure>
+<p>   该设置只在SEMAPHORE下有效，默认值是10，也就是最大能同时执行10个请求，当瞬间超过10个并发的时候，就返回调用降级操作了。</p>
+<hr>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">hystrix.command.default.fallback.isolation.semaphore.maxConcurrentRequests</span></span><br></pre></td></tr></table></figure>
+<p>   该设置官方文档说支持SEMAPHORE和THREAD模式，也就是说当大量降级操作的时候，降级操作是会占用资源的，当降级操作达到该设置的值，就直接返回异常给客户端了。我尝试把这个值设置成1，能查看到一种异常现象<br>   com.netflix.hystrix.exception.HystrixRuntimeException:  fallback execution rejected.</p>
+<hr>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">hystrix.command.default.fallback.enabled</span></span><br></pre></td></tr></table></figure>
+<p>  该设置是打开和关闭降级操作，默认true, 如果设置false，当下级服务调用出现超时、异常等情况就直接抛出异常到客户端了，不会做任何降级操作的调用。</p>
+<hr>
+<h2 id="下面开始才真正是熔断器配置的开始"><a href="#下面开始才真正是熔断器配置的开始" class="headerlink" title="下面开始才真正是熔断器配置的开始"></a>下面开始才真正是熔断器配置的开始</h2><figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">hystrix.command.default.circuitBreaker.enabled</span></span><br></pre></td></tr></table></figure>
+<p>  既然是熔断器，这里才是真正的熔断器设置，熔断的含义就是当服务器请求达到一定负载之后（大量错误或超时请求），暂时性直接拒绝所有请求，这就是熔断的含义。高并发的情况下，可以有效防止雪崩，雪崩的含义就是服务本来正常情况下可以稳定吞吐一定量的并发，当大量并发的时候资源被占用，大量堵塞，反而吞吐量降低，甚至严重情况JVM崩溃。</p>
+<hr>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">hystrix.command.default.circuitBreaker.requestVolumeThreshold</span></span><br><span class="line"><span class="string">hystrix.command.default.circuitBreaker.errorThresholdPercentage</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p> 这两个配置要一起讲</p>
+<ol>
+<li>requestVolumeThreshold 当并发在窗口时间内出现了requestVolumeThreshold次错误就开启熔断器, 这个所谓窗口时间没有看到有设置的地方，官方距离是10秒，不知道是否能改。</li>
+<li>errorThresholdPercentage 当错误率达到 errorThresholdPercentage 设置的值启动熔断，具体这个错误率是否是累计的也没有看到官方文档有说明</li>
+</ol>
+</blockquote>
+<hr>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">hystrix.command.default.circuitBreaker.forceOpen</span></span><br><span class="line"><span class="string">hystrix.command.default.circuitBreaker.forceClosed</span></span><br></pre></td></tr></table></figure>
+<p>上面两个设置是强制打开熔断器和强制关闭熔断器</p>
+<hr>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">hystrix.command.default.circuitBreaker.sleepWindowInMilliseconds</span></span><br></pre></td></tr></table></figure>
+<p>当断路器打开后，会直接拒绝请求，此时间是配置多长时候后再次尝试重新处理请求</p>
+<hr>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">Metrics相关配置</span></span><br></pre></td></tr></table></figure>
+<p>hystrix 自带一个看板插件，metrics properties.主要用于统计配置执行情况 提供给看板插件使用，这里就不详细多讲了</p>
+<hr>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">Request</span> <span class="string">Context</span> <span class="string">相关配置</span></span><br></pre></td></tr></table></figure>
+<p>就请求缓存和日志相关的配置，也不多讲了，小伙伴们可以自行百度或谷歌使用方法</p>
+<hr>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">Collapser</span> <span class="string">Properties</span> <span class="string">相关配置</span></span><br></pre></td></tr></table></figure>
+<p>在一些高并发的接口，你可以尝试合并请求的方式调用，该配置大家也可以自行百度或谷歌使用方法</p>
+<hr>
+<h2 id="Thread-Pool-Properties-线程池配置，以下配置看官方文档的介绍，应该只支持THREAD模式"><a href="#Thread-Pool-Properties-线程池配置，以下配置看官方文档的介绍，应该只支持THREAD模式" class="headerlink" title="Thread Pool Properties 线程池配置，以下配置看官方文档的介绍，应该只支持THREAD模式"></a>Thread Pool Properties 线程池配置，以下配置看官方文档的介绍，应该只支持THREAD模式</h2><p>官方文档介绍到其实当您正确配置时，hystrixcommand层的超时应该很少，但是如果不是网络延迟影响时间，或者在最坏的情况下，connect+read+retry+connect+read，注意这里提到了重试，我没有尝试实验该重试机制，大家知道有这么会事就好。<br><figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">hystrix.threadpool.default.coreSize</span></span><br><span class="line"><span class="string">hystrix.threadpool.default.allowMaximumSizeToDivergeFromCoreSize</span></span><br><span class="line"><span class="string">hystrix.threadpool.default.maximumSize</span></span><br><span class="line"><span class="string">hystrix.threadpool.default.keepAliveTimeMinutes</span></span><br></pre></td></tr></table></figure></p>
+<p>coreSize 该默认值是5，核心线程数也就管理 hystrix-“微服务名称”-线程流水号 的数量。<br>allowMaximumSizeToDivergeFromCoreSize 该设置表示是否开启弹性线程创建<br>maximumSize 当allowMaximumSizeToDivergeFromCoreSize 开启之后，maximumSize-coreSize=可以弹性创建的线程数<br>keepAliveTimeMinutes 当上面的弹性线程创建出来之后，挂起未运行的情况下 keepAliveTimeMinutes 分钟之后就回收掉</p>
+<hr>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">hystrix.threadpool.default.maxQueueSize</span></span><br><span class="line"><span class="string">hystrix.threadpool.default.queueSizeRejectionThreshold</span></span><br></pre></td></tr></table></figure>
+<p>maxQueueSize 默认值是-1, 因此线程池的工作模式是 SynchronousQueue（同步队列） 永远保证队列中只有一个消费对象，生产者存一个，消费者取一下，如果两端处理能力差距太大，在hystrix这里如果出现堵塞就开始拒绝响应。 如果maxQueueSize设置大于0的任何值则线程池工作模式是LinkedBlockingQueue(阻塞队列), maxQueueSize设置5则表示阻塞队列里的队列长度是5。当高并发的时能保证至少5个请求能够在队列里处理，如果第6个并发请求到来，还没有一个队列空间释放出来的话，直接拒绝响应该请求。<br>queueSizeRejectionThreshold 拒绝队列大小，即使maxQueueSize的值没有达到，达到queueSizeRejectionThreshold该值后，请求也会被拒绝，该值主要是为了动态调整maxQueueSize的大小做的一个补偿方案。<br>以上提到拒绝处理，就是直接调用降级操作，不是直接返回异常。</p>
+<hr>
+<h2 id="前面提到了降级操作，如果FeignClient-有两种降级操作的写法"><a href="#前面提到了降级操作，如果FeignClient-有两种降级操作的写法" class="headerlink" title="前面提到了降级操作，如果FeignClient, 有两种降级操作的写法"></a>前面提到了降级操作，如果FeignClient, 有两种降级操作的写法</h2><blockquote>
+<ol>
+<li>fallback 不关心产生降级操作的原因，统一处理。</li>
+<li>fallbackFactory 可以根据产生降级操作的异常，根据情况做不同的处理。</li>
+<li>总结： 降级操作作为补偿性功能，其实可以做很多事情，比如返回友好错误响应给上级服务，根据不同的异常情况，写日志，或者一些补偿性数据库操作。</li>
+</ol>
+</blockquote>
+<h1 id="最后总结以下，Hystrix-该不该用完全看你项目的需要，如何用也是看你的项目需要，相关配置绝对不是设置越大越多就好，合适的设置才是正确的，后面有时间我会分享JVM一些原理来解释一下原因。（其实很多语言和架构的思想都是相通的）"><a href="#最后总结以下，Hystrix-该不该用完全看你项目的需要，如何用也是看你的项目需要，相关配置绝对不是设置越大越多就好，合适的设置才是正确的，后面有时间我会分享JVM一些原理来解释一下原因。（其实很多语言和架构的思想都是相通的）" class="headerlink" title="最后总结以下，Hystrix 该不该用完全看你项目的需要，如何用也是看你的项目需要，相关配置绝对不是设置越大越多就好，合适的设置才是正确的，后面有时间我会分享JVM一些原理来解释一下原因。（其实很多语言和架构的思想都是相通的）"></a>最后总结以下，Hystrix 该不该用完全看你项目的需要，如何用也是看你的项目需要，相关配置绝对不是设置越大越多就好，合适的设置才是正确的，后面有时间我会分享JVM一些原理来解释一下原因。（其实很多语言和架构的思想都是相通的）</h1>
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/03/08/hello-world/" rel="next" title="Hello World">
+                <i class="fa fa-chevron-left"></i> Hello World
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Labidc</p>
+              <div class="site-description motion-element" itemprop="description">喜欢研究技术的本质</div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">2</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                    <span class="site-state-item-count">1</span>
+                    <span class="site-state-item-name">分类</span>
+                  
+                </div>
+              
+
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、为什么用Hystrix？"><span class="nav-number">1.</span> <span class="nav-text">一、为什么用Hystrix？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#先看看Hystrix有些什么功能"><span class="nav-number">1.1.</span> <span class="nav-text">先看看Hystrix有些什么功能</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Hystrix-提供了哪些方式支持熔断器"><span class="nav-number">1.2.</span> <span class="nav-text">Hystrix 提供了哪些方式支持熔断器</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、知道了Hystrix的作用，那我们就需要了解如何用好它。"><span class="nav-number">2.</span> <span class="nav-text">二、知道了Hystrix的作用，那我们就需要了解如何用好它。</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#先描述一下可能出现的应用场景-默认使用Spring-Boot-默认-WebServer-Tomcat"><span class="nav-number">2.0.0.1.</span> <span class="nav-text">先描述一下可能出现的应用场景, 默认使用Spring Boot 默认 WebServer (Tomcat)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#现在我查看一下，没有任何请求的情况下，-微服务A-Tomcat的线程情况（10个名字-http-nio-“端口号”-exec-“线程流水号”）"><span class="nav-number">2.0.0.2.</span> <span class="nav-text">现在我查看一下，没有任何请求的情况下， 微服务A Tomcat的线程情况（10个名字 http-nio-“端口号”-exec-“线程流水号”）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#好了，基本情况描述完了，现在讲讲如何使用，用好任何中间件，一定要搞清楚每个配置的作用，现在我们一个个来"><span class="nav-number">2.0.0.3.</span> <span class="nav-text">好了，基本情况描述完了，现在讲讲如何使用，用好任何中间件，一定要搞清楚每个配置的作用，现在我们一个个来</span></a></li></ol></li></ol><li class="nav-item nav-level-2"><a class="nav-link" href="#配置文件的设置方式有两种"><span class="nav-number">3.</span> <span class="nav-text">配置文件的设置方式有两种</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#正式开始，我们这里以全局默认配置的范例来讲解。"><span class="nav-number">4.</span> <span class="nav-text">正式开始，我们这里以全局默认配置的范例来讲解。</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#首先-Tomcat的工作线程数量20"><span class="nav-number">4.0.0.1.</span> <span class="nav-text">首先 Tomcat的工作线程数量20</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#THREAD-模式下，为每个下级服务生成了多个线程hystrix-“微服务名称”-线程流水号与Hystrix-Timer-线程流水号"><span class="nav-number">4.0.0.2.</span> <span class="nav-text">THREAD 模式下，为每个下级服务生成了多个线程hystrix-“微服务名称”-线程流水号与Hystrix-Timer-线程流水号</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#SEMAPHORE-模式下只生成-Hystrix-Timer-线程流水号-的线程"><span class="nav-number">4.0.0.3.</span> <span class="nav-text">SEMAPHORE 模式下只生成 Hystrix-Timer-线程流水号 的线程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#以上现象印证了官网配图"><span class="nav-number">5.</span> <span class="nav-text">以上现象印证了官网配图</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#注意看下图，现在我改一下上面的图，模拟下层服务的响应延迟-数据库IO并发-小伙伴可以自己做实验"><span class="nav-number">5.0.0.1.</span> <span class="nav-text">注意看下图，现在我改一下上面的图，模拟下层服务的响应延迟(数据库IO并发) 小伙伴可以自己做实验</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#该设置是线程超时时间设置，也就是由-“Hystrix-Timer-线程流水号”-来管理线程超时时间的"><span class="nav-number">6.</span> <span class="nav-text">该设置是线程超时时间设置，也就是由 “Hystrix-Timer-线程流水号” 来管理线程超时时间的</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#下面开始才真正是熔断器配置的开始"><span class="nav-number">7.</span> <span class="nav-text">下面开始才真正是熔断器配置的开始</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Thread-Pool-Properties-线程池配置，以下配置看官方文档的介绍，应该只支持THREAD模式"><span class="nav-number">8.</span> <span class="nav-text">Thread Pool Properties 线程池配置，以下配置看官方文档的介绍，应该只支持THREAD模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#前面提到了降级操作，如果FeignClient-有两种降级操作的写法"><span class="nav-number">9.</span> <span class="nav-text">前面提到了降级操作，如果FeignClient, 有两种降级操作的写法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#最后总结以下，Hystrix-该不该用完全看你项目的需要，如何用也是看你的项目需要，相关配置绝对不是设置越大越多就好，合适的设置才是正确的，后面有时间我会分享JVM一些原理来解释一下原因。（其实很多语言和架构的思想都是相通的）"><span class="nav-number"></span> <span class="nav-text">最后总结以下，Hystrix 该不该用完全看你项目的需要，如何用也是看你的项目需要，相关配置绝对不是设置越大越多就好，合适的设置才是正确的，后面有时间我会分享JVM一些原理来解释一下原因。（其实很多语言和架构的思想都是相通的）</span></a></li></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Labidc</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.0.1</div>
+
+
+
+
+
+  <script src="https://unpkg.com/mermaid@<%= theme.mermaid.version %>/dist/mermaid.min.js"></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({theme: 'forest'});
+    }
+  </script>
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.1"></script>
+
+  <script src="/js/src/motion.js?v=7.0.1"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=7.0.1"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=7.0.1"></script>
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.1"></script>
+<script src="/js/src/post-details.js?v=7.0.1"></script>
+
+
+
+  
+
+
+  <script src="/js/src/next-boot.js?v=7.0.1"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+<script>
+if ($('body').find('pre.mermaid').length) {
+  $.ajax({
+    type: 'GET',
+    url: '//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js',
+    dataType: 'script',
+    cache: true,
+    success: function() {
+      mermaid.initialize({
+        theme: 'forest',
+        logLevel: 3,
+        flowchart: { curve: 'linear' },
+        gantt: { axisFormat: '%m/%d/%Y' },
+        sequence: { actorMargin: 50 }
+      });
+    }
+  });
+}
+</script>
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
