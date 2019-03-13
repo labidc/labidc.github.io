@@ -374,7 +374,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-03-13 09:17:21" itemprop="dateModified" datetime="2019-03-13T09:17:21+08:00">2019-03-13</time>
+                <time title="修改时间：2019-03-13 09:28:07" itemprop="dateModified" datetime="2019-03-13T09:28:07+08:00">2019-03-13</time>
               
             
           </span>
@@ -428,17 +428,17 @@
       
         
           
-            <p>说到Spring Cloud就不得不想到 Netflix 公司, 因为该公司贡献出了微服务相关的很多开源项目。在这里我们今天来说说 Netflix 家族里的 <a href="https://github.com/Netflix/Hystrix" target="_blank" rel="noopener">Netflix</a> ，<a href="https://github.com/Netflix/Hystrix/wiki/Configuration#fallback.isolation.semaphore.maxConcurrentRequests" target="_blank" rel="noopener">相关官方文档</a>. 我是一个使用任何一个中间件，都比较喜欢看官方文档的人, 因为官方的文档最权威</p>
-<h2 id="一、为什么用Hystrix？"><a href="#一、为什么用Hystrix？" class="headerlink" title="一、为什么用Hystrix？"></a>一、为什么用Hystrix？</h2><h3 id="先看看Hystrix有些什么功能"><a href="#先看看Hystrix有些什么功能" class="headerlink" title="先看看Hystrix有些什么功能"></a>先看看Hystrix有些什么功能</h3><pre><code>1. 隔离 : 隔离微服务调用下级服务过程中，下级服务故障或者响应能力不足造成整个系统崩溃。
-2. 熔断 : 当失败率达到一定阈值时，熔断器触发停止继续调用下级服务，直接返回异常或者降级操作并响应给客户端， 防止请求资源堵塞，起到了限流的作用。
-3. 降级 : 当下级服务出现 网络原因、服务响应太慢、异常、的时候调用的补偿函数，不直接触发异常返回给客户端。
+            <p>说到Spring Cloud就不得不想到 Netflix 公司, 因为该公司贡献出了微服务相关的很多开源项目。在这里我们今天来说说 Netflix 家族里的 <a href="https://github.com/Netflix/Hystrix" target="_blank" rel="noopener">Hystrix</a> ，<a href="https://github.com/Netflix/Hystrix/wiki/Configuration#fallback.isolation.semaphore.maxConcurrentRequests" target="_blank" rel="noopener">相关官方文档</a>. 我是一个使用任何一个中间件，都比较喜欢看官方文档的人, 因为官方的文档最权威</p>
+<h2 id="一、为什么用Hystrix？"><a href="#一、为什么用Hystrix？" class="headerlink" title="一、为什么用Hystrix？"></a>一、为什么用Hystrix？</h2><h3 id="先看看Hystrix有些什么功能"><a href="#先看看Hystrix有些什么功能" class="headerlink" title="先看看Hystrix有些什么功能"></a>先看看Hystrix有些什么功能</h3><pre><code>1. 隔离 : 微服务调用下级服务过程中，下级服务故障或者响应能力不足造成整个系统崩溃, 隔离掉有问题的下级服务
+2. 熔断 : 当失败率达到一定阈值时，熔断器触发，停止继续调用下级服务，并直接返回异常或者降级操作响应给客户，这是为了防止请求资源堵塞，起到了限流的作用。
+3. 降级 : 当下级服务出现 网络原因、服务响应太慢、异常、的时候调用的补偿函数，不抛真实的异常信息给客户。
 4. 缓存 : 设置一定的缓存策略，返回缓存数据
 5. 合并请求: 当调用下级服务的时候，下级多次相同调用开销太大，可以合并请求批量调用。
 6. 实时监控、报警: 监控服务调用情况。
-</code></pre><h3 id="Hystrix-提供了哪些方式支持熔断器"><a href="#Hystrix-提供了哪些方式支持熔断器" class="headerlink" title="Hystrix 提供了哪些方式支持熔断器"></a>Hystrix 提供了哪些方式支持熔断器</h3><pre><code>1. 使用注解 @HystrixCommand 
+</code></pre><h3 id="Hystrix-可以使用哪些方式支持熔断器？"><a href="#Hystrix-可以使用哪些方式支持熔断器？" class="headerlink" title="Hystrix 可以使用哪些方式支持熔断器？"></a>Hystrix 可以使用哪些方式支持熔断器？</h3><pre><code>1. 使用注解 @HystrixCommand 
 2. 使用继承 HystrixCommands 和 HystrixObservableCommands 的实现
-3. @FeignClient 用得最多的方式, 记得在配置文件设置 &apos;feign.hystrix.enabled=true&apos; 打开  FeignClient 对熔断器的支持
-</code></pre><h2 id="二、知道了Hystrix的作用，那我们就需要了解如何用好它。"><a href="#二、知道了Hystrix的作用，那我们就需要了解如何用好它。" class="headerlink" title="二、知道了Hystrix的作用，那我们就需要了解如何用好它。"></a>二、知道了Hystrix的作用，那我们就需要了解如何用好它。</h2><h5 id="先描述一下可能出现的应用场景-默认使用Spring-Boot-默认-WebServer-Tomcat"><a href="#先描述一下可能出现的应用场景-默认使用Spring-Boot-默认-WebServer-Tomcat" class="headerlink" title="先描述一下可能出现的应用场景, 默认使用Spring Boot 默认 WebServer (Tomcat)"></a>先描述一下可能出现的应用场景, 默认使用Spring Boot 默认 WebServer (Tomcat)</h5><pre class="mermaid">    graph LR
+3. openfeign 中间件的 @FeignClient 用得最多的方式, 记得在配置文件设置 &apos;feign.hystrix.enabled=true&apos;
+</code></pre><h2 id="二、知道了Hystrix的作用，那我们就需要了解如何用好它。"><a href="#二、知道了Hystrix的作用，那我们就需要了解如何用好它。" class="headerlink" title="二、知道了Hystrix的作用，那我们就需要了解如何用好它。"></a>二、知道了Hystrix的作用，那我们就需要了解如何用好它。</h2><h5 id="先描述一下可能出现的应用场景"><a href="#先描述一下可能出现的应用场景" class="headerlink" title="先描述一下可能出现的应用场景,"></a>先描述一下可能出现的应用场景,</h5><h5 id="以下环境：使用Spring-Boot-默认-WebServer-Tomcat"><a href="#以下环境：使用Spring-Boot-默认-WebServer-Tomcat" class="headerlink" title="以下环境：使用Spring Boot 默认 WebServer (Tomcat)"></a>以下环境：使用Spring Boot 默认 WebServer (Tomcat)</h5><pre class="mermaid">    graph LR
         start[用户请求某接口] --> input[微服务A]
         input -- 调用微服务B -->  B{微服务B}
         input -- 调用微服务C -->  C{微服务C}
@@ -446,8 +446,8 @@
 
 
 
-<h5 id="现在我查看一下，没有任何请求的情况下，-微服务A-Tomcat的线程情况（10个名字-http-nio-“端口号”-exec-“线程流水号”）"><a href="#现在我查看一下，没有任何请求的情况下，-微服务A-Tomcat的线程情况（10个名字-http-nio-“端口号”-exec-“线程流水号”）" class="headerlink" title="现在我查看一下，没有任何请求的情况下， 微服务A Tomcat的线程情况（10个名字 http-nio-“端口号”-exec-“线程流水号”）"></a>现在我查看一下，没有任何请求的情况下， 微服务A Tomcat的线程情况（10个名字 http-nio-“端口号”-exec-“线程流水号”）</h5><p>   <img src="/2019/03/11/Spring-Cloud-之-Hystrix/tomcatnoquest.png" alt="微服务A"></p>
-<h5 id="好了，基本情况描述完了，现在讲讲如何使用，用好任何中间件，一定要搞清楚每个配置的作用，现在我们一个个来"><a href="#好了，基本情况描述完了，现在讲讲如何使用，用好任何中间件，一定要搞清楚每个配置的作用，现在我们一个个来" class="headerlink" title="好了，基本情况描述完了，现在讲讲如何使用，用好任何中间件，一定要搞清楚每个配置的作用，现在我们一个个来"></a>好了，基本情况描述完了，现在讲讲如何使用，用好任何中间件，一定要搞清楚每个配置的作用，现在我们一个个来</h5><blockquote>
+<h5 id="当没有任何请求的情况下，-微服务A-Tomcat容器里的线程情况（10个名字-http-nio-“端口号”-exec-“线程流水号”）"><a href="#当没有任何请求的情况下，-微服务A-Tomcat容器里的线程情况（10个名字-http-nio-“端口号”-exec-“线程流水号”）" class="headerlink" title="当没有任何请求的情况下， 微服务A Tomcat容器里的线程情况（10个名字 http-nio-“端口号”-exec-“线程流水号”）"></a>当没有任何请求的情况下， 微服务A Tomcat容器里的线程情况（10个名字 http-nio-“端口号”-exec-“线程流水号”）</h5><p>   <img src="/2019/03/11/Spring-Cloud-之-Hystrix/tomcatnoquest.png" alt="微服务A"></p>
+<h5 id="好了，基本情况描述完了，现在讲讲如何使用，用好任何中间件，一定要搞清楚每个配置的作用"><a href="#好了，基本情况描述完了，现在讲讲如何使用，用好任何中间件，一定要搞清楚每个配置的作用" class="headerlink" title="好了，基本情况描述完了，现在讲讲如何使用，用好任何中间件，一定要搞清楚每个配置的作用"></a>好了，基本情况描述完了，现在讲讲如何使用，用好任何中间件，一定要搞清楚每个配置的作用</h5><blockquote>
 <h2 id="配置文件的设置方式有两种"><a href="#配置文件的设置方式有两种" class="headerlink" title="配置文件的设置方式有两种"></a>配置文件的设置方式有两种</h2><ol>
 <li>第一种：全局默认设置没有设置HystrixCommandKey的Hystrix方法<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">hystrix.command.default.后面的相关配置</span></span><br></pre></td></tr></table></figure>
 </li>
