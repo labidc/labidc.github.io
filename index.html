@@ -374,7 +374,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-03-12 22:47:56" itemprop="dateModified" datetime="2019-03-12T22:47:56+08:00">2019-03-12</time>
+                <time title="修改时间：2019-03-13 09:17:21" itemprop="dateModified" datetime="2019-03-13T09:17:21+08:00">2019-03-13</time>
               
             
           </span>
@@ -536,7 +536,7 @@
 <figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">Collapser</span> <span class="string">Properties</span> <span class="string">相关配置</span></span><br></pre></td></tr></table></figure>
 <p>在一些高并发的接口，你可以尝试合并请求的方式调用，该配置大家也可以自行百度或谷歌使用方法</p>
 <hr>
-<h2 id="Thread-Pool-Properties-线程池配置，以下配置看官方文档的介绍，应该只支持THREAD模式"><a href="#Thread-Pool-Properties-线程池配置，以下配置看官方文档的介绍，应该只支持THREAD模式" class="headerlink" title="Thread Pool Properties 线程池配置，以下配置看官方文档的介绍，应该只支持THREAD模式"></a>Thread Pool Properties 线程池配置，以下配置看官方文档的介绍，应该只支持THREAD模式</h2><p>官方文档介绍到其实当您正确配置时，hystrixcommand层的超时应该很少，但是如果不是网络延迟影响时间，或者在最坏的情况下，connect+read+retry+connect+read，注意这里提到了重试，我没有尝试实验该重试机制，大家知道有这么会事就好。<br><figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">hystrix.threadpool.default.coreSize</span></span><br><span class="line"><span class="string">hystrix.threadpool.default.allowMaximumSizeToDivergeFromCoreSize</span></span><br><span class="line"><span class="string">hystrix.threadpool.default.maximumSize</span></span><br><span class="line"><span class="string">hystrix.threadpool.default.keepAliveTimeMinutes</span></span><br></pre></td></tr></table></figure></p>
+<h2 id="Thread-Pool-Properties-线程池配置，看官方文档的介绍，应该只支持THREAD模式"><a href="#Thread-Pool-Properties-线程池配置，看官方文档的介绍，应该只支持THREAD模式" class="headerlink" title="Thread Pool Properties 线程池配置，看官方文档的介绍，应该只支持THREAD模式"></a>Thread Pool Properties 线程池配置，看官方文档的介绍，应该只支持THREAD模式</h2><p>官方文档介绍到其实当您正确配置时，hystrixcommand层的超时应该很少，但是如果不是网络延迟影响时间，或者在最坏的情况下，connect+read+retry+connect+read，注意这里提到了重试，我没有尝试实验该重试机制，大家知道有这么会事就好。<br><figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">hystrix.threadpool.default.coreSize</span></span><br><span class="line"><span class="string">hystrix.threadpool.default.allowMaximumSizeToDivergeFromCoreSize</span></span><br><span class="line"><span class="string">hystrix.threadpool.default.maximumSize</span></span><br><span class="line"><span class="string">hystrix.threadpool.default.keepAliveTimeMinutes</span></span><br></pre></td></tr></table></figure></p>
 <p>coreSize 该默认值是5，核心线程数也就管理 hystrix-“微服务名称”-线程流水号 的数量。<br>allowMaximumSizeToDivergeFromCoreSize 该设置表示是否开启弹性线程创建<br>maximumSize 当allowMaximumSizeToDivergeFromCoreSize 开启之后，maximumSize-coreSize=可以弹性创建的线程数<br>keepAliveTimeMinutes 当上面的弹性线程创建出来之后，挂起未运行的情况下 keepAliveTimeMinutes 分钟之后就回收掉</p>
 <hr>
 <figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">hystrix.threadpool.default.maxQueueSize</span></span><br><span class="line"><span class="string">hystrix.threadpool.default.queueSizeRejectionThreshold</span></span><br></pre></td></tr></table></figure>
@@ -549,7 +549,7 @@
 <li>总结： 降级操作作为补偿性功能，其实可以做很多事情，比如返回友好错误响应给上级服务，根据不同的异常情况，写日志，或者一些补偿性数据库操作。</li>
 </ol>
 </blockquote>
-<h1 id="最后总结以下，Hystrix-该不该用完全看你项目的需要，如何用也是看你的项目需要，相关配置绝对不是设置越大越多就好，合适的设置才是正确的，后面有时间我会分享JVM一些原理来解释一下原因。（其实很多语言和架构的思想都是相通的）"><a href="#最后总结以下，Hystrix-该不该用完全看你项目的需要，如何用也是看你的项目需要，相关配置绝对不是设置越大越多就好，合适的设置才是正确的，后面有时间我会分享JVM一些原理来解释一下原因。（其实很多语言和架构的思想都是相通的）" class="headerlink" title="最后总结以下，Hystrix 该不该用完全看你项目的需要，如何用也是看你的项目需要，相关配置绝对不是设置越大越多就好，合适的设置才是正确的，后面有时间我会分享JVM一些原理来解释一下原因。（其实很多语言和架构的思想都是相通的）"></a>最后总结以下，Hystrix 该不该用完全看你项目的需要，如何用也是看你的项目需要，相关配置绝对不是设置越大越多就好，合适的设置才是正确的，后面有时间我会分享JVM一些原理来解释一下原因。（其实很多语言和架构的思想都是相通的）</h1>
+<h1 id="最后总结一下，Hystrix-该不该用完全看你项目的需要，如何用也是看你的项目需要，相关配置绝对不是设置越大越多就好，合适的设置才是正确的，后面有时间我会分享JVM一些原理来解释一下原因。（其实很多语言和架构的思想都是相通的）"><a href="#最后总结一下，Hystrix-该不该用完全看你项目的需要，如何用也是看你的项目需要，相关配置绝对不是设置越大越多就好，合适的设置才是正确的，后面有时间我会分享JVM一些原理来解释一下原因。（其实很多语言和架构的思想都是相通的）" class="headerlink" title="最后总结一下，Hystrix 该不该用完全看你项目的需要，如何用也是看你的项目需要，相关配置绝对不是设置越大越多就好，合适的设置才是正确的，后面有时间我会分享JVM一些原理来解释一下原因。（其实很多语言和架构的思想都是相通的）"></a>最后总结一下，Hystrix 该不该用完全看你项目的需要，如何用也是看你的项目需要，相关配置绝对不是设置越大越多就好，合适的设置才是正确的，后面有时间我会分享JVM一些原理来解释一下原因。（其实很多语言和架构的思想都是相通的）</h1>
           
         
       
@@ -667,7 +667,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-03-12 22:51:55" itemprop="dateModified" datetime="2019-03-12T22:51:55+08:00">2019-03-12</time>
+                <time title="修改时间：2019-03-13 09:16:35" itemprop="dateModified" datetime="2019-03-13T09:16:35+08:00">2019-03-13</time>
               
             
           </span>
@@ -703,7 +703,7 @@
       
         
           
-            <p>这是我编码10多年来第一次建立一个博客，希望大家支持。在这里更多是分享一些我对技术的理解，欢迎相互交流与学习。<br>这个世界上没有完美的程序，更没有无敌的程序猿，只有相互学习，取长补短才能进步。</p>
+            <p>这是我编码10多年来第一次自己搭建博客，希望大家支持。在这里更多是分享一些我对技术的理解，欢迎相互交流与学习。<br>这个世界上没有完美的程序，更没有无敌的程序猿，只有相互学习，取长补短才能进步。</p>
 <h2 id="谦虚待人，对技术有敬畏之心"><a href="#谦虚待人，对技术有敬畏之心" class="headerlink" title="谦虚待人，对技术有敬畏之心"></a>谦虚待人，对技术有敬畏之心</h2><h2 id="了解技术的本质才能更好用好它。"><a href="#了解技术的本质才能更好用好它。" class="headerlink" title="了解技术的本质才能更好用好它。"></a>了解技术的本质才能更好用好它。</h2>
           
         
