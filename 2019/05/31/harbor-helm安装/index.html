@@ -98,25 +98,25 @@
 
 
 
-  <meta name="description" content="SpringSpring Cloud KubernetesKubernetes">
-<meta name="keywords" content="JAVA,JavaScript,C#,Spring,Spring Cloud,领域驱动开发">
-<meta property="og:type" content="website">
-<meta property="og:title" content="分类列表">
-<meta property="og:url" content="https://labidc.github.io/categories/index.html">
+  <meta name="description" content="Harbor 是容器仓库，所以用到容器的架构，都会自己创建私有的仓库，废话少说，这里讲讲我遇到的坑。本文针对安装了Helm 的环境安装Harbor, 并把Habor部署到k8s, 所以没有安装Helm请查看我上一篇文章下载harbor源码，并进入该目录 12git clone https://github.com/goharbor/harbor-helm.gitcd harbor-helm/  这">
+<meta name="keywords" content="Kubernetes, Helm, Harbor">
+<meta property="og:type" content="article">
+<meta property="og:title" content="harbor-helm安装">
+<meta property="og:url" content="https://labidc.github.io/2019/05/31/harbor-helm安装/index.html">
 <meta property="og:site_name" content="老码的技术仓库">
-<meta property="og:description" content="SpringSpring Cloud KubernetesKubernetes">
+<meta property="og:description" content="Harbor 是容器仓库，所以用到容器的架构，都会自己创建私有的仓库，废话少说，这里讲讲我遇到的坑。本文针对安装了Helm 的环境安装Harbor, 并把Habor部署到k8s, 所以没有安装Helm请查看我上一篇文章下载harbor源码，并进入该目录 12git clone https://github.com/goharbor/harbor-helm.gitcd harbor-helm/  这">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-05-30T16:16:32.230Z">
+<meta property="og:updated_time" content="2019-05-31T14:33:03.932Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="分类列表">
-<meta name="twitter:description" content="SpringSpring Cloud KubernetesKubernetes">
+<meta name="twitter:title" content="harbor-helm安装">
+<meta name="twitter:description" content="Harbor 是容器仓库，所以用到容器的架构，都会自己创建私有的仓库，废话少说，这里讲讲我遇到的坑。本文针对安装了Helm 的环境安装Harbor, 并把Habor部署到k8s, 所以没有安装Helm请查看我上一篇文章下载harbor源码，并进入该目录 12git clone https://github.com/goharbor/harbor-helm.gitcd harbor-helm/  这">
 
 
 
 
 
 
-  <link rel="canonical" href="https://labidc.github.io/categories/">
+  <link rel="canonical" href="https://labidc.github.io/2019/05/31/harbor-helm安装/">
 
 
 
@@ -126,7 +126,7 @@
   };
 </script>
 
-  <title>分类列表 | 老码的技术仓库</title>
+  <title>harbor-helm安装 | 老码的技术仓库</title>
   
 
 
@@ -233,7 +233,7 @@
         
         
           
-          <li class="menu-item menu-item-categories menu-item-active">
+          <li class="menu-item menu-item-categories">
 
     
     
@@ -292,69 +292,205 @@
           
             
 
-    
-    
-      
-      
-    
-      
-      
-    
-      
-      
-    
-    
-
-  
-
-
           
           <div id="content" class="content">
             
 
   <div id="posts" class="posts-expand">
     
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://labidc.github.io/2019/05/31/harbor-helm安装/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Labidc">
+      <meta itemprop="description" content="喜欢研究技术的本质">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="老码的技术仓库">
+    </span>
+
     
-    
-    <div class="post-block page">
       <header class="post-header">
 
-<h1 class="post-title" itemprop="name headline">分类列表
-
-</h1>
-
-<div class="post-meta">
-  
-  
-
-
-
-</div>
-
-</header>
-
-      
-      
-      
-      <div class="post-body">
         
         
-          <h2 id="Spring"><a href="#Spring" class="headerlink" title="Spring"></a>Spring</h2><p><a href="/categories/Spring-Cloud/" title="Spring Cloud">Spring Cloud</a></p>
-<h2 id="Kubernetes"><a href="#Kubernetes" class="headerlink" title="Kubernetes"></a>Kubernetes</h2><p><a href="/categories/Kubernetes/" title="Kubernetes">Kubernetes</a></p>
+          <h1 class="post-title" itemprop="name headline">harbor-helm安装
 
+              
+            
+          </h1>
         
-      </div>
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-05-31 22:09:32 / 修改时间：22:33:03" itemprop="dateCreated datePublished" datetime="2019-05-31T22:09:32+08:00">2019-05-31</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Kubernetes/" itemprop="url" rel="index"><span itemprop="name">Kubernetes</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon">
+            <i class="fa fa-eye"></i>
+             阅读次数： 
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
       
       
+
+      
+        <h2 id="Harbor-是容器仓库，所以用到容器的架构，都会自己创建私有的仓库，废话少说，这里讲讲我遇到的坑。本文针对安装了Helm-的环境安装Harbor-并把Habor部署到k8s-所以没有安装Helm请查看我上一篇文章"><a href="#Harbor-是容器仓库，所以用到容器的架构，都会自己创建私有的仓库，废话少说，这里讲讲我遇到的坑。本文针对安装了Helm-的环境安装Harbor-并把Habor部署到k8s-所以没有安装Helm请查看我上一篇文章" class="headerlink" title="Harbor 是容器仓库，所以用到容器的架构，都会自己创建私有的仓库，废话少说，这里讲讲我遇到的坑。本文针对安装了Helm 的环境安装Harbor, 并把Habor部署到k8s, 所以没有安装Helm请查看我上一篇文章"></a>Harbor 是容器仓库，所以用到容器的架构，都会自己创建私有的仓库，废话少说，这里讲讲我遇到的坑。本文针对安装了Helm 的环境安装Harbor, 并把Habor部署到k8s, 所以没有安装Helm请查看我上一篇文章</h2><p>下载harbor源码，并进入该目录</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/goharbor/harbor-helm.git</span><br><span class="line">cd harbor-helm/</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>这一步非常重要，如果您只是本地测试环境，没有配置dns服务，没有公网域名访问的需求，请先修改配置文件, values.yaml 可以设置密码，等一下安装配置参数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">vim values.yaml</span><br><span class="line">#  expose.type 配置 修改成 nodePort模式，其实配置文件里有说明，可以详细看看配置的不同的区别</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>这一步也比较重要，默认helm没有权限创建持久卷(PV)，但是该harbor-helm编排中用到了数据库,redis,等应用作为服务的存储，并用到了持久卷申请（PVC）。 所以这里要为harbor提前创建好持久卷(PV)供harbor-helm使用</p>
+</li>
+<li>这里我使用的是 nfs ,作为远程服务器存储使用方案，也是k8s常用的持久卷解决方案</li>
+<li>安装nfs看这篇文章就行了, 注意权限问题，注意，只需要看如何安装与如何配置 <a href="https://blog.csdn.net/networken/article/details/86697018" target="_blank" rel="noopener">传送门过去查看</a></li>
+</ul>
+<h2 id="nfs安装完成之后（可以是非master的其他节点安装）"><a href="#nfs安装完成之后（可以是非master的其他节点安装）" class="headerlink" title="nfs安装完成之后（可以是非master的其他节点安装）"></a>nfs安装完成之后（可以是非master的其他节点安装）</h2><p>在k8s上为harbor 创建 pv持久卷<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">for i in &#123;1..9&#125;; do</span><br><span class="line">cat &lt;&lt;EOF | kubectl apply -f -</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: PersistentVolume</span><br><span class="line">metadata:</span><br><span class="line">  name: pv00$&#123;i&#125;</span><br><span class="line">spec:</span><br><span class="line">  capacity:</span><br><span class="line">    storage: 100Gi</span><br><span class="line">  accessModes:</span><br><span class="line">    - ReadWriteOnce #需要注意</span><br><span class="line">  persistentVolumeReclaimPolicy: Recycle</span><br><span class="line">  nfs:</span><br><span class="line">    # 注意这里是nfs服务上的磁盘路径，并给予了nfs权限</span><br><span class="line">    path: /volume1/harbor/nfs$&#123;i&#125;</span><br><span class="line">    # 注意这里的ip是地址nfs服务器的ip</span><br><span class="line">    server: 192.168.2.4</span><br><span class="line">EOF</span><br><span class="line">done</span><br></pre></td></tr></table></figure></p>
+<h2 id="最后安装进入harbor-helm-源码目录"><a href="#最后安装进入harbor-helm-源码目录" class="headerlink" title="最后安装进入harbor-helm 源码目录"></a>最后安装进入harbor-helm 源码目录</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">helm install --name harbor-v1 .  --wait --timeout 1500 --debug --namespace harbor</span><br></pre></td></tr></table></figure>
       
     </div>
-    
-
-
 
     
+
     
     
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Kubernetes-Helm-Harbor/" rel="tag"># Kubernetes, Helm, Harbor</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/05/31/Kubernetes-helm/" rel="next" title="Kubernetes 安装 helm 工具">
+                <i class="fa fa-chevron-left"></i> Kubernetes 安装 helm 工具
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
   </div>
 
 
@@ -480,7 +616,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Spring"><span class="nav-number">1.</span> <span class="nav-text">Spring</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Kubernetes"><span class="nav-number">2.</span> <span class="nav-text">Kubernetes</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Harbor-是容器仓库，所以用到容器的架构，都会自己创建私有的仓库，废话少说，这里讲讲我遇到的坑。本文针对安装了Helm-的环境安装Harbor-并把Habor部署到k8s-所以没有安装Helm请查看我上一篇文章"><span class="nav-number">1.</span> <span class="nav-text">Harbor 是容器仓库，所以用到容器的架构，都会自己创建私有的仓库，废话少说，这里讲讲我遇到的坑。本文针对安装了Helm 的环境安装Harbor, 并把Habor部署到k8s, 所以没有安装Helm请查看我上一篇文章</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#nfs安装完成之后（可以是非master的其他节点安装）"><span class="nav-number">2.</span> <span class="nav-text">nfs安装完成之后（可以是非master的其他节点安装）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#最后安装进入harbor-helm-源码目录"><span class="nav-number">3.</span> <span class="nav-text">最后安装进入harbor-helm 源码目录</span></a></li></ol></div>
             
 
           </div>
